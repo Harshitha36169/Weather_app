@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - WeatherNow</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="weather-bg" class="weather-bg"></div>
+    <div class="dashboard-container">
+        <!-- Sidebar for Favorites -->
+        <div class="glass-card sidebar">
+            <h3>My Cities</h3>
+            <div id="favorites-list" class="favorites-list">
+                <!-- Cities will be injected here -->
+            </div>
+        </div>
+
+        <!-- Main Weather Content -->
+        <div class="glass-card main-content">
+            <header>
+                <div class="logo">
+                    <i data-lucide="cloud-sun"></i>
+                    <span>WeatherNow</span>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button id="home-btn" title="Set as Default City">
+                        <i data-lucide="home"></i>
+                    </button>
+                    <button id="favorite-btn" title="Save City">
+                        <i data-lucide="star"></i>
+                    </button>
+                    <button id="location-btn" title="Use current location">
+                        <i data-lucide="map-pin"></i>
+                    </button>
+                    <a href="{{ url_for('profile') }}" id="profile-btn" title="Profile" style="padding: 0; overflow: hidden; border-radius: 12px; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); border: 1px solid var(--glass-border);">
+                        {% if user.profile_pic == 'default_avatar.png' %}
+                            <i data-lucide="user"></i>
+                        {% else %}
+                            <img src="{{ url_for('static', filename='uploads/profile_pics/' + user.profile_pic) }}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% endif %}
+                    </a>
+                    <a href="{{ url_for('logout') }}" id="logout-btn" title="Logout">
+                        <i data-lucide="log-out"></i>
+                    </a>
+                </div>
+            </header>
+
+            <div id="alert-banner" class="alert-banner hidden">
+                <i data-lucide="alert-triangle"></i>
+                <span id="alert-msg"></span>
+            </div>
+
+            <div class="welcome-msg" style="margin-bottom: 20px;">
+                <h3 style="font-weight: 400;">Hello, <span style="font-weight: 700; color: var(--primary);">{{ user.username }}</span>!</h3>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="city-input" placeholder="Search city..." spellcheck="false">
+                <button id="search-btn">
+                    <i data-lucide="search"></i>
+                </button>
+            </div>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Fetching weather data...</p>
+            </div>
+
+            <div id="weather-info" class="weather-info hidden">
+                <div class="main-weather">
+                    <div class="temp-display">
+                        <img id="weather-icon" src="" alt="weather icon">
+                        <h1 id="temp-value">0°C</h1>
+                    </div>
+                    <h2 id="city-name">City, Country</h2>
+                    <p id="weather-desc">Cloudy</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <i data-lucide="thermometer"></i>
+                        <div>
+                            <span class="label">Feels Like</span>
+                            <span class="value" id="feels-like">0°C</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i data-lucide="droplets"></i>
+                        <div>
+                            <span class="label">Humidity</span>
+                            <span class="value" id="humidity">0%</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i data-lucide="wind"></i>
+                        <div>
+                            <span class="label">Wind Speed</span>
+                            <span class="value" id="wind-speed">0 m/s</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i data-lucide="arrow-up-circle"></i>
+                        <div>
+                            <span class="label">High / Low</span>
+                            <span class="value" id="temp-range">0° / 0°</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart Section -->
+                <div class="chart-container" style="margin-top: 30px;">
+                    <canvas id="temp-chart"></canvas>
+                </div>
+
+                <!-- Forecast Section -->
+                <h3 style="margin-top: 30px; margin-bottom: 15px;">5-Day Forecast</h3>
+                <div id="forecast-container" class="forecast-container">
+                    <!-- Forecast items injected here -->
+                </div>
+            </div>
+
+            <div id="error-message" class="error-message hidden">
+                <i data-lucide="alert-circle"></i>
+                <p id="error-text">City not found. Please try again.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
